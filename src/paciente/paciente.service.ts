@@ -3,7 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PacienteEntity } from './paciente.entity';
 import { Repository } from 'typeorm';
-import { BusinessError, BusinessLogicException } from 'src/shared/errors/business-errors';
+import { BusinessError, BusinessLogicException } from '../shared/errors/business-errors';
+import { PATIENT_NAME_TOO_SHORT } from '../shared/errors/error-messages';
 
 @Injectable()
 export class PacienteService {
@@ -25,6 +26,9 @@ export class PacienteService {
     }
 
     async create(paciente: PacienteEntity): Promise<PacienteEntity> {
+        if (paciente.nombre.length < 3) {
+            throw new BusinessLogicException(PATIENT_NAME_TOO_SHORT, BusinessError.BAD_REQUEST);
+        }
         return await this.pacienteRepository.save(paciente);
     }
 

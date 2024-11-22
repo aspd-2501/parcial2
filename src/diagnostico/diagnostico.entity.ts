@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
-import { Column, Entity, PrimaryGeneratedColumn, JoinTable, ManyToMany } from 'typeorm';
-import { PacienteEntity } from 'src/paciente/paciente.entity';
+import { Column, Entity, PrimaryGeneratedColumn, ManyToMany } from 'typeorm';
+import { PacienteEntity } from '../paciente/paciente.entity';
 
 @Entity('diagnostico')
 export class DiagnosticoEntity {
@@ -16,6 +16,5 @@ export class DiagnosticoEntity {
     
 
     @ManyToMany(() => PacienteEntity, paciente => paciente.diagnosticos)
-    @JoinTable()
     pacientes: PacienteEntity[];
 }
