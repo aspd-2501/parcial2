@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { DiagnosticoEntity } from './diagnostico.entity';
 import { BusinessError, BusinessLogicException } from '../shared/errors/business-errors';
+import { DESCRIPTION_TOO_LONG, DIAGNOSTICO_NOT_FOUND } from '../shared/errors/error-messages';
 
 
 @Injectable()
@@ -18,14 +19,17 @@ export class DiagnosticoService {
     }
 
     async findOne(id: string): Promise<DiagnosticoEntity> {
-        const diagnostico: DiagnosticoEntity = await this.diagnosticoRepository.findOne({where: {id}, relations: ['diagnosticos', 'diagnosticos'] });
+        const diagnostico: DiagnosticoEntity = await this.diagnosticoRepository.findOne({where: {id}, relations: ['pacientes'] });
         if (!diagnostico) {
-            throw new BusinessLogicException('The medic with the given id was not found', BusinessError.NOT_FOUND);
+            throw new BusinessLogicException(DIAGNOSTICO_NOT_FOUND, BusinessError.NOT_FOUND);
         }
         return diagnostico;
     }
 
     async create(diagnostico: DiagnosticoEntity): Promise<DiagnosticoEntity> {
+        if (diagnostico.descripcion.length > 200) {
+            throw new BusinessLogicException(DESCRIPTION_TOO_LONG, BusinessError.BAD_REQUEST);
+        }
         return await this.diagnosticoRepository.save(diagnostico);
     }
 
@@ -37,7 +41,7 @@ export class DiagnosticoService {
     async delete(id: string) {
         const diagnostico: DiagnosticoEntity = await this.diagnosticoRepository.findOne({where: {id}});
         if (!diagnostico) {
-            throw new BusinessLogicException('The medic with the given id was not found', BusinessError.NOT_FOUND);
+            throw new BusinessLogicException(DIAGNOSTICO_NOT_FOUND, BusinessError.NOT_FOUND);
         }
 
         await this.diagnosticoRepository.remove(diagnostico);

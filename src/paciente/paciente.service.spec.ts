@@ -6,7 +6,8 @@ import { Repository } from 'typeorm';
 import { TypeOrmTestingConfig } from '../shared/testing-utils/typeorm-testing-config';
 import { PacienteEntity } from './paciente.entity';
 import { faker } from '@faker-js/faker';
-import { PACIENTE_NOT_FOUND, PATIENT_NAME_TOO_SHORT } from '../shared/errors/error-messages';
+import { PACIENTE_NOT_FOUND, PATIENT_HAS_DIAGNOSTICS, PATIENT_NAME_TOO_SHORT } from '../shared/errors/error-messages';
+import { DiagnosticoEntity } from '../diagnostico/diagnostico.entity';
 
 describe('PacienteService', () => {
   let service: PacienteService;
@@ -32,7 +33,7 @@ describe('PacienteService', () => {
     for (let i = 0; i < 5; i++) {
       const paciente: PacienteEntity = await repository.save({
         nombre: faker.person.fullName(),
-        genero: faker.person.sex(),        
+        genero: faker.person.gender(),        
         medicos: [],
         diagnosticos: [],
       })
@@ -75,7 +76,7 @@ describe('PacienteService', () => {
     const Paciente: PacienteEntity = {
       id: "",
       nombre: faker.person.fullName(),
-      genero: faker.person.sex(),
+      genero: faker.person.gender(),
       medicos: [],
       diagnosticos: []
     }
@@ -95,10 +96,31 @@ describe('PacienteService', () => {
     const Paciente: PacienteEntity = {
       id: "",
       nombre: "AB",
-      genero: faker.person.sex(),
+      genero: faker.person.gender(),
       medicos: [],
       diagnosticos: []
     }
     await expect(service.create(Paciente)).rejects.toHaveProperty('message', PATIENT_NAME_TOO_SHORT);
+  });
+
+  it ('delete should remove a patient', async () => {
+    const paciente: PacienteEntity = pacienteList[0];
+    await service.delete(paciente.id);
+    const deletedPaciente: PacienteEntity = await repository.findOne({where: {id: paciente.id}});
+    expect(deletedPaciente).toBeNull();
+  });
+
+  it ('delete should throw an exception when the patient has diagnostics associated to it', async () => {
+    const paciente: PacienteEntity = pacienteList[0];
+    console.log(paciente);
+    const diagnostico: DiagnosticoEntity = await repository.save({
+      id: "",
+      nombre: faker.lorem.word(),
+      descripcion: faker.lorem.sentence(),
+      pacientes: [paciente],
+    });  
+
+    paciente.diagnosticos = [diagnostico];
+    await expect(service.delete(paciente.id)).rejects.toHaveProperty('message', PATIENT_HAS_DIAGNOSTICS);
   });
 });

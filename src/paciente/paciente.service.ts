@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { PacienteEntity } from './paciente.entity';
 import { Repository } from 'typeorm';
 import { BusinessError, BusinessLogicException } from '../shared/errors/business-errors';
-import { PATIENT_NAME_TOO_SHORT } from '../shared/errors/error-messages';
+import { PACIENTE_NOT_FOUND, PATIENT_HAS_DIAGNOSTICS, PATIENT_NAME_TOO_SHORT } from '../shared/errors/error-messages';
 
 @Injectable()
 export class PacienteService {
@@ -38,9 +38,13 @@ export class PacienteService {
     }
 
     async delete(id: string) {
-        const paciente: PacienteEntity = await this.pacienteRepository.findOne({where: {id}});
+        const paciente: PacienteEntity = await this.pacienteRepository.findOne({where: {id}, relations: ['medicos', 'diagnosticos']});
         if (!paciente) {
-            throw new BusinessLogicException('The patient with the given id was not found', BusinessError.NOT_FOUND);
+            throw new BusinessLogicException(PACIENTE_NOT_FOUND, BusinessError.NOT_FOUND);
+        }
+
+        if (paciente.diagnosticos.length > 200) {
+            throw new BusinessLogicException(PATIENT_HAS_DIAGNOSTICS, BusinessError.BAD_REQUEST);
         }
 
         await this.pacienteRepository.remove(paciente);
