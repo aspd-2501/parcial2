@@ -13,6 +13,7 @@ describe('PacienteService', () => {
   let service: PacienteService;
   let repository: Repository<PacienteEntity>;
   let pacienteList: PacienteEntity[];
+  let diagnosticoRepository: Repository<DiagnosticoEntity>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -22,6 +23,7 @@ describe('PacienteService', () => {
 
     service = module.get<PacienteService>(PacienteService);
     repository = module.get<Repository<PacienteEntity>>(getRepositoryToken(PacienteEntity));
+    diagnosticoRepository = module.get<Repository<DiagnosticoEntity>>(getRepositoryToken(DiagnosticoEntity));
     await seedDatabase();
   });
 
@@ -112,8 +114,8 @@ describe('PacienteService', () => {
 
   it ('delete should throw an exception when the patient has diagnostics associated to it', async () => {
     const paciente: PacienteEntity = pacienteList[0];
-    console.log(paciente);
-    const diagnostico: DiagnosticoEntity = await repository.save({
+
+    const diagnostico: DiagnosticoEntity = await diagnosticoRepository.save({
       id: "",
       nombre: faker.lorem.word(),
       descripcion: faker.lorem.sentence(),

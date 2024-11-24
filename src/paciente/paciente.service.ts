@@ -43,7 +43,7 @@ export class PacienteService {
             throw new BusinessLogicException(PACIENTE_NOT_FOUND, BusinessError.NOT_FOUND);
         }
 
-        if (paciente.diagnosticos.length > 200) {
+        if (paciente.diagnosticos.length > 0) {
             throw new BusinessLogicException(PATIENT_HAS_DIAGNOSTICS, BusinessError.BAD_REQUEST);
         }
 

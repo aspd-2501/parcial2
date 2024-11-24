@@ -13,6 +13,7 @@ describe('MedicoService', () => {
   let service: MedicoService;
   let repository: Repository<MedicoEntity>;
   let medicoList: MedicoEntity[];
+  let pacienteRepository: Repository<PacienteEntity>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -22,6 +23,7 @@ describe('MedicoService', () => {
 
     service = module.get<MedicoService>(MedicoService);
     repository = module.get<Repository<MedicoEntity>>(getRepositoryToken(MedicoEntity));
+    pacienteRepository = module.get<Repository<PacienteEntity>>(getRepositoryToken(PacienteEntity));
     await seedDatabase();
   });
 
@@ -124,7 +126,7 @@ describe('MedicoService', () => {
 
   it('delete should throw an error when the medic has patients', async () => {
     const medico: MedicoEntity = medicoList[0];
-    const paciente: PacienteEntity = await repository.save({
+    const paciente: PacienteEntity = await pacienteRepository.save({
       id: "",
       nombre: faker.person.fullName(),
       genero: faker.person.gender(),
