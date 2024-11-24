@@ -1,12 +1,12 @@
 /* eslint-disable prettier/prettier */
 import { IsNotEmpty, IsString } from 'class-validator';
 
-export class DiagnosticoDto {
-    @IsNotEmpty()
+export class PacienteDto {
     @IsString()
-    nombre: string;
+    @IsNotEmpty()
+    readonly nombre: string;
 
-    @IsNotEmpty()
     @IsString()
-    descripcion: string;
+    @IsNotEmpty()
+    readonly genero: string;
 }
