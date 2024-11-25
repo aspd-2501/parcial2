@@ -7,7 +7,7 @@ import { PacienteDto } from './paciente.dto';
 import { PacienteEntity } from './paciente.entity';
 import { plainToInstance } from 'class-transformer';
 
-@Controller('paciente')
+@Controller('pacientes')
 @UseInterceptors(BusinessErrorsInterceptor)
 export class PacienteController {
     constructor(private readonly pacienteService: PacienteService) {}
