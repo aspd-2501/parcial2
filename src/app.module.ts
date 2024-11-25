@@ -12,7 +12,10 @@ import { PacienteEntity } from './paciente/paciente.entity';
 import { PacienteMedicoModule } from './paciente-medico/paciente-medico.module';
 
 @Module({
-  imports: [MedicoModule, PacienteModule, DiagnosticoModule,
+  imports: [MedicoModule, 
+    PacienteMedicoModule, 
+    PacienteModule, 
+    DiagnosticoModule,
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: 'localhost',
@@ -25,7 +28,6 @@ import { PacienteMedicoModule } from './paciente-medico/paciente-medico.module';
       synchronize: true,
       keepConnectionAlive: true,
     }),
-    PacienteMedicoModule,
   ],
   controllers: [AppController],
   providers: [AppService],

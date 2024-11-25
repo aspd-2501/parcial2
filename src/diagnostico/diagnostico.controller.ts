@@ -7,7 +7,7 @@ import { DiagnosticoDto } from './diagnostico.dto';
 import { DiagnosticoEntity } from './diagnostico.entity';
 import { plainToInstance } from 'class-transformer';
 
-@Controller('diagnostico')
+@Controller('diagnosticos')
 @UseInterceptors(BusinessErrorsInterceptor)
 export class DiagnosticoController {
     constructor(private readonly diagnosticoServices: DiagnosticoService) {}
